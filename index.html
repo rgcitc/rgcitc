@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RGCITC — Rangpur Govt. College Information &amp; Technology Club</title>
+  <meta name="description" content="Official website of Rangpur Govt. College Information & Technology Club (RGCITC). Wings: Web Development, Competitive Programming, App Development, and Robotics.">
+  <meta name="keywords" content="RGCITC, Rangpur Govt College, রংপুর সরকারি কলেজ, ICT Club, Web Development, Competitive Programming, App Development, Robotics">
+
+  <!-- Google Fonts: Plus Jakarta Sans, Hind Siliguri & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="#" class="brand" aria-label="RGCITC Home">
+        <img src="assets/rgc-logo.png" alt="RGC Logo" class="brand-logo-img">
+        <div>
+          <div class="brand-title">RGCITC</div>
+          <div class="brand-sub">Rangpur Govt. College</div>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#wings" class="nav-link">Our Wings</a>
+        <a href="#roadmap" class="nav-link">Roadmaps</a>
+        <a href="#vision" class="nav-link">What We Do &amp; Vision</a>
+        <a href="#campus" class="nav-link">Campus</a>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+
+        <button id="mobile-menu-toggle" class="mobile-nav-toggle" aria-label="Open Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+  <aside id="mobile-drawer" class="mobile-drawer" aria-label="Mobile Navigation">
+    <div>
+      <div class="mobile-drawer-header">
+        <div class="brand">
+          <img src="assets/rgc-logo.png" alt="RGC Logo" class="brand-logo-img">
+          <div class="brand-title">RGCITC</div>
+        </div>
+        <button id="drawer-close" class="drawer-close-btn" aria-label="Close Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <nav class="mobile-drawer-links">
+        <a href="#about" class="mobile-nav-link">About Club</a>
+        <a href="#wings" class="mobile-nav-link">Our Wings</a>
+        <a href="#roadmap" class="mobile-nav-link">Learning Roadmaps</a>
+        <a href="#vision" class="mobile-nav-link">What We Do &amp; Vision</a>
+        <a href="#campus" class="mobile-nav-link">Campus Location</a>
+      </nav>
+    </div>
+    <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+      Rangpur Govt. College Information &amp; Technology Club
+    </div>
+  </aside>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-badge">
+          <span class="hero-badge-tag">RGCITC</span>
+          <span class="hero-badge-text">Students Who Build.</span>
+        </div>
+        <h1 class="hero-title">
+          Rangpur Govt. College<br>
+          <span>Information &amp; Technology Club</span>
+        </h1>
+        <p class="hero-subtitle">
+          আমরা কেবল কোডিং বা রোবোটিক্স শিখি না — ক্যাম্পাসের রিয়েল সমস্যা সমাধান করি, কলেজের অফিশিয়াল ওয়েবসাইট ও ডিজিটাল সিস্টেম ডেভেলপ করি, এবং জাতীয় পর্যায়ে কলেজকে রিপ্রেজেন্ট করি।
+        </p>
+        <div class="hero-cta-group">
+          <a href="#wings" class="btn-primary">Explore Our 4 Wings</a>
+          <a href="#vision" class="btn-secondary">What We Do &amp; Vision</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+      <div class="container">
+        <div class="about-box">
+          <div class="about-text">
+            <div class="section-label">About RGCITC</div>
+            <h3>Innovation, Engineering &amp; Campus Impact</h3>
+            <p>
+              <strong>RGCITC</strong> (Rangpur Govt. College Information &amp; Technology Club) হলো রংপুর সরকারি কলেজের সেন্ট্রাল স্টুডেন্ট-লেড টেক প্ল্যাটফর্ম।
+            </p>
+            <p>
+              আমাদের মূল ফোকাস সফটওয়্যার ডেভেলপমেন্ট, অ্যালগরিদমিক প্রবলেম সলভিং, মোবাইল অ্যাপস এবং রোবোটিক্স চর্চা। পাশাপাশি আমরা কলেজের ডিজিটাল ইনফ্রাস্ট্রাকচার তৈরি এবং বিভিন্ন ক্যাম্পাসে টেকনিক্যাল সাপোর্ট দিয়ে থাকি।
+            </p>
+          </div>
+          <div class="about-info-card">
+            <div class="about-logo-preview">
+              <img src="assets/rgc-logo.png" alt="RGC Crest" class="about-logo-img">
+              <div>
+                <strong style="font-size: 1rem; color: var(--text-primary);">Rangpur Govt. College</strong>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Estd. 1877 • Radhaballav, Rangpur</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Club</span>
+              <span class="info-value">Information &amp; Technology Club (RGCITC)</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Affiliation</span>
+              <span class="info-value">Rangpur Govt. College, Bangladesh</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Core Wings</span>
+              <span class="info-value">Web Dev • CP • App Dev • Robotics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our 4 Wings Section -->
+    <section id="wings" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">Specialized Departments</div>
+          <h2 class="section-title">Our Four Core Wings</h2>
+          <p class="section-desc">
+            আধুনিক সফটওয়্যার ইঞ্জিনিয়ারিং, অ্যালগরিদম, মোবাইল অ্যাপস এবং হার্ডওয়্যার উদ্ভাবনকে সামনে রেখে আমাদের ৪টি উইং পরিচালিত হয়।
+          </p>
+        </div>
+
+        <div class="wings-grid">
+          <!-- 1. Web Development Wing -->
+          <div class="wing-card" data-wing="web">
+            <div class="wing-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <h3 class="wing-title">Web Development</h3>
+            <div class="wing-sub-title">ওয়েব ডেভেলপমেন্ট উইং</div>
+            <ul class="wing-bullet-list">
+              <li>মডার্ন ওয়েবসাইট ও ফুল-স্ট্যাক ওয়েব অ্যাপ্লিকেশন</li>
+              <li>কলেজ পোর্টাল, ব্যাকএন্ড এপিআই ও ক্লাউড সিস্টেম</li>
+              <li>ক্যাম্পাস ও অন্যান্য ক্লাবের জন্য ডিজিটাল প্ল্যাটফর্ম</li>
+            </ul>
+          </div>
+
+          <!-- 2. Competitive Programming Wing -->
+          <div class="wing-card" data-wing="cp">
+            <div class="wing-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+                <line x1="14" y1="4" x2="10" y2="20"></line>
+              </svg>
+            </div>
+            <h3 class="wing-title">Competitive Programming</h3>
+            <div class="wing-sub-title">কম্পিটিটিভ প্রোগ্রামিং উইং</div>
+            <ul class="wing-bullet-list">
+              <li>ডেটা স্ট্রাকচার ও অ্যালগরিদমিক প্রবলেম সলভিং</li>
+              <li>ম্যাথমেটিকাল অ্যানালাইসিস ও রেগুলার কোড স্প্রিন্ট</li>
+              <li>ন্যাশনাল কনটেস্ট ও হ্যাকাথনের জন্য টিম গ্রুমিং</li>
+            </ul>
+          </div>
+
+          <!-- 3. App Development Wing -->
+          <div class="wing-card" data-wing="app">
+            <div class="wing-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
+            </div>
+            <h3 class="wing-title">App Development</h3>
+            <div class="wing-sub-title">অ্যাপ ডেভেলপমেন্ট উইং</div>
+            <ul class="wing-bullet-list">
+              <li>নেটিভ মোবাইল অ্যাপস (Android)</li>
+              <li>ক্যাম্পাস ইউটিলিটি ও স্টুডেন্টদের ডিজিটাল টুলস</li>
+              <li>ক্লিন UI/UX ডিজাইন ও ডেটাবেস সিস্টেম</li>
+            </ul>
+          </div>
+
+          <!-- 4. Robotics Wing -->
+          <div class="wing-card" data-wing="robotics">
+            <div class="wing-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="12" cy="5" r="2"></circle>
+                <path d="M12 7v4"></path>
+              </svg>
+            </div>
+            <h3 class="wing-title">Robotics &amp; IoT</h3>
+            <div class="wing-sub-title">রোবোটিক্স ও আইওটি উইং</div>
+            <ul class="wing-bullet-list">
+              <li>Arduino ভিত্তিক মাইক্রোকন্ট্রোলার প্রজেক্ট</li>
+              <li>IoT সেন্সর, স্মার্ট সার্কিট ও অটোমেশন</li>
+              <li>রোবোটিক্স কম্পিটিশনের জন্য প্রস্তুতি</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Club Journey Roadmap Section (Modern Curved Serpentine Flow) -->
+    <section id="roadmap" class="section">
+      <div class="container">
+        <div class="section-header text-center">
+          <div class="section-label">Member Journey &amp; Growth</div>
+          <h2 class="section-title">Club Roadmap &amp; Progression</h2>
+          <p class="section-desc">
+            বেসিক স্কিলস থেকে শুরু করে উইং স্পেশালাইজেশন, ক্যাম্পাস সিস্টেম আর্কিটেকচার এবং জাতীয় পর্যায়ে প্রতিনিধিত্বের পর্যায়ক্রমিক রোডম্যাপ।
+          </p>
+        </div>
+
+        <!-- Serpentine Curved Flow Roadmap -->
+        <div class="snake-roadmap-wrapper">
+          <!-- Background Curved Neon SVG River -->
+          <svg class="snake-svg-track" viewBox="0 0 600 900" fill="none" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="snakeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#06b6d4" />
+                <stop offset="35%" stop-color="#3b82f6" />
+                <stop offset="70%" stop-color="#6366f1" />
+                <stop offset="100%" stop-color="#10b981" />
+              </linearGradient>
+              <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <path class="snake-glow-path" d="M 300 0 C 100 120, 100 230, 300 300 C 500 370, 500 480, 300 550 C 100 620, 100 730, 300 800 L 300 900" stroke="url(#snakeGradient)" stroke-width="6" stroke-linecap="round" filter="url(#neonGlow)" />
+            <path class="snake-core-path" d="M 300 0 C 100 120, 100 230, 300 300 C 500 370, 500 480, 300 550 C 100 620, 100 730, 300 800 L 300 900" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" />
+          </svg>
+
+          <!-- Milestone Items List -->
+          <div class="snake-milestones">
+            
+            <!-- Milestone 01 (Left) -->
+            <div class="snake-item snake-left">
+              <div class="snake-content-card">
+                <div class="snake-card-header">
+                  <span class="snake-phase-badge">Phase 01</span>
+                  <span class="snake-wing-hint">All Wings Onboarding</span>
+                </div>
+                <h4 class="snake-title">Initiation &amp; Foundations</h4>
+                <div class="snake-chips">
+                  <span>C++ Basics</span>
+                  <span>Git &amp; GitHub</span>
+                  <span>HTML5 / CSS3</span>
+                  <span>Circuit Basics</span>
+                </div>
+                <div class="snake-outcome">
+                  <strong>Goal:</strong> ফান্ডামেন্টাল লজিক, টুলস সেটআপ ও মৌলিক কোডিং অভ্যাস।
+                </div>
+              </div>
+              <div class="snake-node-anchor">
+                <span class="node-ring"></span>
+                <span class="node-core">01</span>
+              </div>
+            </div>
+
+            <!-- Milestone 02 (Right) -->
+            <div class="snake-item snake-right">
+              <div class="snake-node-anchor">
+                <span class="node-ring"></span>
+                <span class="node-core">02</span>
+              </div>
+              <div class="snake-content-card">
+                <div class="snake-card-header">
+                  <span class="snake-phase-badge">Phase 02</span>
+                  <span class="snake-wing-hint">Wing Specialization</span>
+                </div>
+                <h4 class="snake-title">Core Tracks &amp; Tooling</h4>
+                <div class="snake-chips">
+                  <span>React &amp; Tailwind</span>
+                  <span>CP STL &amp; Binary Search</span>
+                  <span>Flutter UI</span>
+                  <span>Arduino C++ &amp; Sensors</span>
+                </div>
+                <div class="snake-outcome">
+                  <strong>Goal:</strong> উইং-ভিত্তিক ফ্রেমওয়ার্ক শেখা ও প্রথম কার্যকর প্রজেক্ট বিল্ড করা।
+                </div>
+              </div>
+            </div>
+
+            <!-- Milestone 03 (Left) -->
+            <div class="snake-item snake-left">
+              <div class="snake-content-card">
+                <div class="snake-card-header">
+                  <span class="snake-phase-badge">Phase 03</span>
+                  <span class="snake-wing-hint">Advanced Engineering</span>
+                </div>
+                <h4 class="snake-title">Projects, Contests &amp; IoT</h4>
+                <div class="snake-chips">
+                  <span>Next.js &amp; APIs</span>
+                  <span>DP &amp; Graph Theory</span>
+                  <span>Firebase &amp; State</span>
+                  <span>ESP32 &amp; MQTT Dashboards</span>
+                </div>
+                <div class="snake-outcome">
+                  <strong>Goal:</strong> ফুল-স্ট্যাক সিস্টেম তৈরি ও অনলাইন জাজে ১২০০-১৬০০ রেটিং অর্জন।
+                </div>
+              </div>
+              <div class="snake-node-anchor">
+                <span class="node-ring"></span>
+                <span class="node-core">03</span>
+              </div>
+            </div>
+
+            <!-- Milestone 04 (Right) -->
+            <div class="snake-item snake-right">
+              <div class="snake-node-anchor">
+                <span class="node-ring"></span>
+                <span class="node-core">04</span>
+              </div>
+              <div class="snake-content-card">
+                <div class="snake-card-header">
+                  <span class="snake-phase-badge">Phase 04</span>
+                  <span class="snake-wing-hint">Production &amp; Arenas</span>
+                </div>
+                <h4 class="snake-title">Campus Systems &amp; National Impact</h4>
+                <div class="snake-chips">
+                  <span>RGC College Portals</span>
+                  <span>ICPC &amp; Hackathons</span>
+                  <span>Play Store Releases</span>
+                  <span>High-Speed LFR Bots</span>
+                </div>
+                <div class="snake-outcome">
+                  <strong>Goal:</strong> কলেজের ডিজিটাল প্ল্যাটফর্ম ডিপ্লয় এবং জাতীয় প্রতিযোগিতায় কলেজের প্রতিনিধিত্ব।
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vision & What We Do Section -->
+    <section id="vision" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">Vision &amp; Key Directives</div>
+          <h2 class="section-title">What We Do &amp; Build</h2>
+          <p class="section-desc">
+            রংপুর সরকারি কলেজ আইসিটি ক্লাবের মূল উদ্দেশ্য, প্রাতিষ্ঠানিক দায়িত্ব এবং নিয়মিত উদ্যোগসমূহ।
+          </p>
+        </div>
+
+        <div class="mission-hub-grid">
+          <!-- Pillar 1: Campus Digital Infrastructure -->
+          <div class="mission-card" data-pillar="campus">
+            <div class="mission-card-top">
+              <div class="mission-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+              <div>
+                <h3 class="mission-card-title">Campus Digital Infrastructure</h3>
+                <span class="mission-card-tag">Systems &amp; Institutional Support</span>
+              </div>
+            </div>
+            <div class="mission-items">
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>RGC College Website:</strong> রংপুর সরকারি কলেজের অফিশিয়াল ওয়েবসাইট ডেভেলপমেন্ট ও নিয়মিত মেইনটেন্যান্স।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>ICT &amp; Technical Support:</strong> কলেজ প্রশাসন ও বিভিন্ন ইভেন্টে টেকনিক্যাল সাপোর্ট, অনলাইন রেজিস্ট্রেশন ও লাইভ রেজাল্ট সিস্টেম তৈরি করা।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Sister Club Platforms:</strong> ক্যাম্পাসের অন্যান্য ক্লাবের জন্য ওয়েবসাইট ও ডিজিটাল প্ল্যাটফর্ম ডেভেলপ করা।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Campus Problem Solving:</strong> শিক্ষার্থীদের দৈনন্দিন দরকারি কাজ সহজ করতে সফটওয়্যার ও ডিজিটাল টুলস তৈরি।</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pillar 2: Robotics & Hardware Engineering -->
+          <div class="mission-card" data-pillar="hardware">
+            <div class="mission-card-top">
+              <div class="mission-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                  <circle cx="12" cy="5" r="2"></circle>
+                  <path d="M12 7v4"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="mission-card-title">Robotics &amp; Hardware Lab</h3>
+                <span class="mission-card-tag">Embedded Systems &amp; IoT</span>
+              </div>
+            </div>
+            <div class="mission-items">
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Arduino &amp; Microcontrollers:</strong> সার্কিট ডিজাইন, মাইক্রোকন্ট্রোলার ফার্মওয়্যার ও হার্ডওয়্যার প্রোটোটাইপিং।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>IoT &amp; Automation:</strong> সেন্সর গ্রিড, অটোমেটেড কন্ট্রোল এবং প্র্যাকটিক্যাল ক্যাম্পাসের জন্য আইওটি প্রজেক্ট।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Robotics Builds:</strong> বিভিন্ন রোবোটিক্স কম্পিটিশন ও প্রদর্শনীর জন্য লাইন-ফলোয়ার ও অন্যান্য রোবট প্রস্তুত করা।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Hands-on Labs:</strong> আইডিয়াকে বাস্তবে রূপ দিতে ল্যাবে নিয়মিত সার্কিট ও হার্ডওয়্যার টেস্টিং জ্যাম।</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pillar 3: Competitive Programming & Contests -->
+          <div class="mission-card" data-pillar="competitive">
+            <div class="mission-card-top">
+              <div class="mission-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 18 22 12 16 6"></polyline>
+                  <polyline points="8 6 2 12 8 18"></polyline>
+                  <line x1="14" y1="4" x2="10" y2="20"></line>
+                </svg>
+              </div>
+              <div>
+                <h3 class="mission-card-title">Competitive Excellence</h3>
+                <span class="mission-card-tag">Contests, Hackathons &amp; Arenas</span>
+              </div>
+            </div>
+            <div class="mission-items">
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Contest Teams:</strong> প্রোগ্রামিং ও রোবোটিক্স কম্পিটিশনের জন্য ডেডিকেটেড টিম তৈরি ও ট্রেইনিং।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>National Representation:</strong> জাতীয় হ্যাকাথন, আইসিটি ফেয়ার ও সায়েন্স ফেস্টে কলেজের প্রতিনিধিত্ব করা।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Host Tournaments:</strong> ক্যাম্পাসে নিয়মিত প্রোগ্রামিং কনটেস্ট, কোড স্প্রিন্ট ও হ্যাকাথন পরিচালনা।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Representing RGC:</strong> টেক প্রজেক্ট ও কম্পিটিশনের মাধ্যমে রংপুর সরকারি কলেজের সুনাম বৃদ্ধি।</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pillar 4: Mentorship & Community -->
+          <div class="mission-card" data-pillar="community">
+            <div class="mission-card-top">
+              <div class="mission-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="mission-card-title">Mentorship &amp; Open Community</h3>
+                <span class="mission-card-tag">Community, GitHub &amp; Outreach</span>
+              </div>
+            </div>
+            <div class="mission-items">
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Student Mentorship:</strong> প্রোগ্রামিং, অ্যাপস, ওয়েব ও রোবোটিক্সে জুনিয়রদের নিয়মিত দিকনির্দেশনা ও গাইডেন্স।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Workshops &amp; Talks:</strong> স্কিল ডেভেলপমেন্ট ওয়ার্কশপ, টেকনিক্যাল সেমিনার ও প্রজেক্ট শোকেস।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>GitHub Archive:</strong> ক্লাবের অফিশিয়াল গিটহাবে ওপেন সোর্স কোড ও রিসোর্স সংরক্ষণ।</div>
+              </div>
+              <div class="mission-item">
+                <span class="mission-bullet">›</span>
+                <div><strong>Alumni &amp; University Bridges:</strong> ইন্ডাস্ট্রির সাবেক শিক্ষার্থী ও বিভিন্ন বিশ্ববিদ্যালয়ের টেক ক্লাবের সাথে সমন্বয়।</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Campus Details Section -->
+    <section id="campus" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">Campus Location</div>
+          <h2 class="section-title">Rangpur Govt. College</h2>
+          <p class="section-desc">
+            উত্তরবঙ্গের অন্যতম প্রাচীন ও ঐতিহ্যবাহী বিদ্যাপীঠ, যা ১৮৭৭ সাল থেকে শিক্ষা ও সংস্কৃতিতে নেতৃত্ব দিয়ে আসছে।
+          </p>
+        </div>
+
+        <div class="about-box">
+          <div class="about-text">
+            <h3>Campus &amp; Club Headquarters</h3>
+            <p>
+              রংপুর শহরের রাধাবল্লভে অবস্থিত ঐতিহাসিক রংপুর সরকারি কলেজ প্রাঙ্গণেই আমাদের ক্লাবের মূল কেন্দ্র।
+            </p>
+            <p>
+              Web Development, Competitive Programming, App Development কিংবা Robotics-এ আগ্রহী যে কোনো শিক্ষার্থী ক্লাবের রেগুলার সেশন ও প্রজেক্টে যুক্ত হয়ে নিজের স্কিল ডেভেলপ করতে পারে।
+            </p>
+          </div>
+          <div class="about-info-card">
+            <div class="info-item">
+              <span class="info-label">Institution</span>
+              <span class="info-value">Rangpur Govt. College (রংপুর সরকারি কলেজ)</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Address</span>
+              <span class="info-value">Radhaballav, Rangpur - 5400, Bangladesh</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Organization</span>
+              <span class="info-value">Information &amp; Technology Club (RGCITC)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <img src="assets/rgc-logo.png" alt="RGC Logo" class="brand-logo-img">
+            <div class="brand-title">RGCITC</div>
+          </div>
+          <p>
+           Empowering College students across software engineering, algorithms, and robotics.
+          </p>
+          <div class="social-links">
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+              </svg>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Four Wings</h4>
+          <div class="footer-links">
+            <a href="#wings">Web Development</a>
+            <a href="#wings">Competitive Programming</a>
+            <a href="#wings">App Development</a>
+            <a href="#wings">Robotics &amp; IoT</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <div class="footer-links">
+            <a href="#about">About RGCITC</a>
+            <a href="#wings">Our Wings</a>
+            <a href="#roadmap">Learning Roadmaps</a>
+            <a href="#vision">What We Do &amp; Vision</a>
+            <a href="#campus">Campus Location</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; RGCITC — Rangpur Govt. College Information &amp; Technology Club.</div>
+        <div>Radhaballav, Rangpur, Bangladesh</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript -->
+  <script src="js/main.js"></script>
+</body>
+</html>
