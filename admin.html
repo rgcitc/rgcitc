@@ -355,29 +355,68 @@
     </div>
   </div>
 
+  <!-- Supabase JS Client & Core Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/features.js"></script>
   <script>
-    // Authentication Check
-    function checkAuth() {
-      const isLoggedIn = localStorage.getItem(STORAGE_KEYS.IS_ADMIN) === 'true';
+    function sanitizeText(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function showToast(message, type = 'info') {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+      toast.innerHTML = `<span>${icon}</span><span>${sanitizeText(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Auth & Session Check with Supabase
+    async function checkAuth() {
+      const supabase = getSupabase();
       const authGate = document.getElementById('admin-auth-gate');
       const dashboard = document.getElementById('admin-dashboard-area');
 
-      if (!isLoggedIn) {
+      if (!supabase) {
+        showToast('Supabase Client পাওয়া যায়নি। Credentials কনফিগার করুন।', 'error');
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
         authGate.style.display = 'block';
         dashboard.style.display = 'none';
       } else {
         authGate.style.display = 'none';
         dashboard.style.display = 'block';
-        updateStats();
-        renderRegistrationsTable();
-        renderNoticesTable();
+        loadDashboardData();
       }
     }
 
-    function handleAdminLogout() {
-      localStorage.removeItem(STORAGE_KEYS.IS_ADMIN);
+    async function handleAdminLogout() {
+      const supabase = getSupabase();
+      if (supabase) {
+        await supabase.auth.signOut();
+      }
       showToast('লগআউট সম্পন্ন হয়েছে।', 'info');
       checkAuth();
     }
@@ -397,36 +436,69 @@
       document.getElementById('publish-notice-modal').classList.remove('active');
     }
 
+    let globalNotices = [];
+    let globalRegistrations = [];
+
+    async function loadDashboardData() {
+      const supabase = getSupabase();
+      if (!supabase) return;
+
+      // 1. Fetch Notices
+      const { data: notices, error: nErr } = await supabase
+        .from('notices')
+        .select('*')
+        .order('is_pinned', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (nErr) {
+        console.error('Error fetching notices:', nErr);
+      } else {
+        globalNotices = notices || [];
+      }
+
+      // 2. Fetch Registrations (Protected by RLS; returns only if authenticated)
+      const { data: regs, error: rErr } = await supabase
+        .from('registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (rErr) {
+        console.error('Error fetching registrations:', rErr);
+      } else {
+        globalRegistrations = regs || [];
+      }
+
+      updateStats();
+      renderRegistrationsTable();
+      renderNoticesTable();
+    }
+
     function updateStats() {
-      const notices = getNotices();
-      const regs = getRegistrations();
-      document.getElementById('stat-notices-count').innerText = notices.length;
-      document.getElementById('stat-reg-total').innerText = regs.length;
-      document.getElementById('stat-reg-pending').innerText = regs.filter(r => r.status === 'pending').length;
-      document.getElementById('stat-reg-approved').innerText = regs.filter(r => r.status === 'approved').length;
+      document.getElementById('stat-notices-count').innerText = globalNotices.length;
+      document.getElementById('stat-reg-total').innerText = globalRegistrations.length;
+      document.getElementById('stat-reg-pending').innerText = globalRegistrations.filter(r => r.status === 'pending').length;
+      document.getElementById('stat-reg-approved').innerText = globalRegistrations.filter(r => r.status === 'approved').length;
     }
 
     function renderRegistrationsTable() {
       const tbody = document.getElementById('registrations-tbody');
       const mobileCards = document.getElementById('registrations-mobile-cards');
-      const regs = getRegistrations();
 
-      if (regs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো আবেদন জমা পড়েনি।</td></tr>`;
-        mobileCards.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো আবেদন জমা পড়েনি।</div>`;
+      if (globalRegistrations.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো আবেদন ডাটাবেসে নেই।</td></tr>`;
+        mobileCards.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো আবেদন ডাটাবেসে নেই।</div>`;
         return;
       }
 
-      // Desktop table render
-      tbody.innerHTML = regs.map(r => `
+      tbody.innerHTML = globalRegistrations.map(r => `
         <tr>
-          <td><strong>${escapeHtml(r.fullName)}</strong></td>
-          <td>${escapeHtml(r.roll)}<br><small style="color:var(--text-muted);">${escapeHtml(r.session || 'N/A')}</small></td>
-          <td>${escapeHtml(r.dept || 'N/A')}</td>
-          <td>${(r.wings || []).map(w => `<span style="display:inline-block; font-size:0.75rem; background:var(--bg-tertiary); padding:2px 6px; border-radius:4px; margin:2px;">${escapeHtml(w)}</span>`).join('')}</td>
+          <td><strong>${sanitizeText(r.full_name)}</strong></td>
+          <td>${sanitizeText(r.roll)}<br><small style="color:var(--text-muted);">${sanitizeText(r.session || 'N/A')}</small></td>
+          <td>${sanitizeText(r.department || 'N/A')}</td>
+          <td>${(r.wings || []).map(w => `<span style="display:inline-block; font-size:0.75rem; background:var(--bg-tertiary); padding:2px 6px; border-radius:4px; margin:2px;">${sanitizeText(w)}</span>`).join('')}</td>
           <td>
-            <a href="mailto:${escapeHtml(r.email)}" style="color:var(--accent-cyan); font-size:0.85rem;">${escapeHtml(r.email)}</a><br>
-            <small style="color:var(--text-muted);">${escapeHtml(r.phone)}</small>
+            <a href="mailto:${sanitizeText(r.email)}" style="color:var(--accent-cyan); font-size:0.85rem;">${sanitizeText(r.email)}</a><br>
+            <small style="color:var(--text-muted);">${sanitizeText(r.phone)}</small>
           </td>
           <td>
             <span class="status-badge status-${r.status}">${r.status.toUpperCase()}</span>
@@ -444,25 +516,24 @@
         </tr>
       `).join('');
 
-      // Mobile cards render
-      mobileCards.innerHTML = regs.map(r => `
+      mobileCards.innerHTML = globalRegistrations.map(r => `
         <div class="mobile-reg-card">
           <div class="mobile-reg-header">
             <div>
-              <strong style="font-size: 1.05rem; color: var(--text-primary);">${escapeHtml(r.fullName)}</strong>
+              <strong style="font-size: 1.05rem; color: var(--text-primary);">${sanitizeText(r.full_name)}</strong>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
-                Roll: ${escapeHtml(r.roll)} • Session: ${escapeHtml(r.session || 'N/A')}
+                Roll: ${sanitizeText(r.roll)} • Session: ${sanitizeText(r.session || 'N/A')}
               </div>
             </div>
             <span class="status-badge status-${r.status}">${r.status.toUpperCase()}</span>
           </div>
           <div class="mobile-reg-body">
-            <div><strong>Dept:</strong> ${escapeHtml(r.dept || 'N/A')}</div>
-            <div><strong>Contact:</strong> ${escapeHtml(r.phone)} | <a href="mailto:${escapeHtml(r.email)}" style="color:var(--accent-cyan);">${escapeHtml(r.email)}</a></div>
+            <div><strong>Dept:</strong> ${sanitizeText(r.department || 'N/A')}</div>
+            <div><strong>Contact:</strong> ${sanitizeText(r.phone)} | <a href="mailto:${sanitizeText(r.email)}" style="color:var(--accent-cyan);">${sanitizeText(r.email)}</a></div>
             <div style="margin-top: 0.25rem;">
-              <strong>Wings:</strong> ${(r.wings || []).map(w => `<span style="display:inline-block; font-size:0.75rem; background:var(--bg-tertiary); padding:2px 6px; border-radius:4px; margin:2px;">${escapeHtml(w)}</span>`).join('')}
+              <strong>Wings:</strong> ${(r.wings || []).map(w => `<span style="display:inline-block; font-size:0.75rem; background:var(--bg-tertiary); padding:2px 6px; border-radius:4px; margin:2px;">${sanitizeText(w)}</span>`).join('')}
             </div>
-            ${r.statement ? `<div style="font-style: italic; margin-top: 0.25rem; background: var(--bg-primary); padding: 0.5rem; border-radius: var(--radius-sm);">"${escapeHtml(r.statement)}"</div>` : ''}
+            ${r.statement ? `<div style="font-style: italic; margin-top: 0.25rem; background: var(--bg-primary); padding: 0.5rem; border-radius: var(--radius-sm);">"${sanitizeText(r.statement)}"</div>` : ''}
           </div>
           <div class="table-actions" style="margin-top: 0.5rem;">
             ${r.status === 'pending' ? `
@@ -479,105 +550,118 @@
     function renderNoticesTable() {
       const tbody = document.getElementById('notices-tbody');
       const mobileCards = document.getElementById('notices-mobile-cards');
-      const notices = getNotices();
 
-      if (notices.length === 0) {
+      if (globalNotices.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো নোটিশ নেই।</td></tr>`;
         mobileCards.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো নোটিশ নেই।</div>`;
         return;
       }
 
-      // Desktop table render
-      tbody.innerHTML = notices.map(n => `
-        <tr>
-          <td>
-            <strong>${escapeHtml(n.title)}</strong>
-            ${n.pinned ? '<span style="color:var(--accent-cyan); font-size:0.75rem; margin-left:6px;">📌 Pinned</span>' : ''}
-          </td>
-          <td><span class="badge-tag ${n.badgeClass || 'badge-general'}">${escapeHtml(n.category)}</span></td>
-          <td style="font-family:var(--font-mono); font-size:0.85rem;">${escapeHtml(n.date)}</td>
-          <td>${escapeHtml(n.author || 'N/A')}</td>
-          <td><span class="status-badge status-approved">Live</span></td>
-          <td>
+      tbody.innerHTML = globalNotices.map(n => {
+        const formattedDate = new Date(n.created_at).toISOString().split('T')[0];
+        return `
+          <tr>
+            <td>
+              <strong>${sanitizeText(n.title)}</strong>
+              ${n.is_pinned ? '<span style="color:var(--accent-cyan); font-size:0.75rem; margin-left:6px;">📌 Pinned</span>' : ''}
+            </td>
+            <td><span class="badge-tag ${n.badge_class || 'badge-general'}">${sanitizeText(n.category)}</span></td>
+            <td style="font-family:var(--font-mono); font-size:0.85rem;">${formattedDate}</td>
+            <td>${sanitizeText(n.author || 'N/A')}</td>
+            <td><span class="status-badge status-approved">Live</span></td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-sm btn-sm-delete" onclick="deleteNotice('${n.id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      mobileCards.innerHTML = globalNotices.map(n => {
+        const formattedDate = new Date(n.created_at).toISOString().split('T')[0];
+        return `
+          <div class="mobile-reg-card">
+            <div class="mobile-reg-header">
+              <div>
+                <span class="badge-tag ${n.badge_class || 'badge-general'}">${sanitizeText(n.category)}</span>
+                ${n.is_pinned ? '<span style="color:var(--accent-cyan); font-size:0.75rem; margin-left:6px;">📌 Pinned</span>' : ''}
+                <h3 style="font-size: 1.05rem; margin-top: 0.4rem; color: var(--text-primary);">${sanitizeText(n.title)}</h3>
+              </div>
+            </div>
+            <div class="mobile-reg-body">
+              <div><strong>Date:</strong> ${formattedDate} • <strong>Author:</strong> ${sanitizeText(n.author || 'RGCITC')}</div>
+              <p style="margin-top: 0.25rem;">${sanitizeText(n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content)}</p>
+            </div>
             <div class="table-actions">
-              <button class="btn-sm btn-sm-delete" onclick="deleteNotice('${n.id}')">Delete</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-
-      // Mobile cards render
-      mobileCards.innerHTML = notices.map(n => `
-        <div class="mobile-reg-card">
-          <div class="mobile-reg-header">
-            <div>
-              <span class="badge-tag ${n.badgeClass || 'badge-general'}">${escapeHtml(n.category)}</span>
-              ${n.pinned ? '<span style="color:var(--accent-cyan); font-size:0.75rem; margin-left:6px;">📌 Pinned</span>' : ''}
-              <h3 style="font-size: 1.05rem; margin-top: 0.4rem; color: var(--text-primary);">${escapeHtml(n.title)}</h3>
+              <button class="btn-sm btn-sm-delete" style="width: 100%;" onclick="deleteNotice('${n.id}')">Delete Notice</button>
             </div>
           </div>
-          <div class="mobile-reg-body">
-            <div><strong>Date:</strong> ${escapeHtml(n.date)} • <strong>Author:</strong> ${escapeHtml(n.author || 'RGCITC')}</div>
-            <p style="margin-top: 0.25rem;">${escapeHtml(n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content)}</p>
-          </div>
-          <div class="table-actions">
-            <button class="btn-sm btn-sm-delete" style="width: 100%;" onclick="deleteNotice('${n.id}')">Delete Notice</button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
+    window.updateRegStatus = async function(id, status) {
+      const supabase = getSupabase();
+      if (!supabase) return;
 
-    window.updateRegStatus = function(id, status) {
-      const regs = getRegistrations();
-      const target = regs.find(r => r.id === id);
-      if (target) {
-        target.status = status;
-        saveRegistrations(regs);
-        renderRegistrationsTable();
-        updateStats();
+      const { error } = await supabase
+        .from('registrations')
+        .update({ status: status })
+        .eq('id', id);
+
+      if (error) {
+        showToast('স্ট্যাটাস আপডেট ব্যর্থ: ' + error.message, 'error');
+      } else {
         showToast(`স্টুডেন্ট আবেদন ${status === 'approved' ? 'অনুমোদন' : 'বাতিল'} করা হয়েছে।`, 'success');
+        loadDashboardData();
       }
     };
 
-    window.deleteReg = function(id) {
-      if (!confirm('আপনি কি এই আবেদনটি মুছে ফেলতে চান?')) return;
-      let regs = getRegistrations();
-      regs = regs.filter(r => r.id !== id);
-      saveRegistrations(regs);
-      renderRegistrationsTable();
-      updateStats();
-      showToast('আবেদন মুছে ফেলা হয়েছে।', 'info');
+    window.deleteReg = async function(id) {
+      if (!confirm('আপনি কি এই আবেদনটি স্থায়ীভাবে ডাটাবেস থেকে মুছে ফেলতে চান?')) return;
+      const supabase = getSupabase();
+      if (!supabase) return;
+
+      const { error } = await supabase
+        .from('registrations')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        showToast('মুছে ফেলতে সমস্যা: ' + error.message, 'error');
+      } else {
+        showToast('আবেদন ডাটাবেস থেকে মুছে ফেলা হয়েছে।', 'info');
+        loadDashboardData();
+      }
     };
 
-    window.deleteNotice = function(id) {
-      if (!confirm('আপনি কি এই নোটিশটি মুছে ফেলতে চান?')) return;
-      let notices = getNotices();
-      notices = notices.filter(n => n.id !== id);
-      saveNotices(notices);
-      renderNoticesTable();
-      updateStats();
-      showToast('নোটিশ মুছে ফেলা হয়েছে।', 'info');
+    window.deleteNotice = async function(id) {
+      if (!confirm('আপনি কি এই নোটিশটি স্থায়ীভাবে মুছে ফেলতে চান?')) return;
+      const supabase = getSupabase();
+      if (!supabase) return;
+
+      const { error } = await supabase
+        .from('notices')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        showToast('নোটিশ মুছতে সমস্যা: ' + error.message, 'error');
+      } else {
+        showToast('নোটিশ মুছে ফেলা হয়েছে।', 'info');
+        loadDashboardData();
+      }
     };
 
     window.exportRegistrationsCSV = function() {
-      const regs = getRegistrations();
-      if (regs.length === 0) {
+      if (globalRegistrations.length === 0) {
         showToast('রপ্তানি করার মতো কোনো আবেদন নেই!', 'error');
         return;
       }
       let csv = '\uFEFF' + 'Full Name,Roll,Session,Department,Email,Phone,Wings,Status,Date\n';
-      regs.forEach(r => {
-        csv += `"${(r.fullName||'').replace(/"/g, '""')}","${r.roll}","${r.session||''}","${r.dept||''}","${r.email}","${r.phone}","${(r.wings || []).join('; ')}","${r.status}","${r.createdAt}"\n`;
+      globalRegistrations.forEach(r => {
+        csv += `"${(r.full_name||'').replace(/"/g, '""')}","${r.roll}","${r.session||''}","${r.department||''}","${r.email}","${r.phone}","${(r.wings || []).join('; ')}","${r.status}","${r.created_at}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -590,38 +674,59 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Default admin login state check
       checkAuth();
 
-      // Handle Admin Login
+      // Supabase Email & Password Sign In
       const loginForm = document.getElementById('admin-login-form');
       if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
           e.preventDefault();
           const email = document.getElementById('login-email').value.trim();
           const pass = document.getElementById('login-password').value;
+          const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-          // Default credentials (or when connected to Firebase auth)
-          if ((email === 'admin@rgcitc.org' || email === 'admin') && pass === 'admin123') {
-            localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
+          submitBtn.disabled = true;
+          submitBtn.innerText = 'যাচাই করা হচ্ছে...';
+
+          const supabase = getSupabase();
+          if (!supabase) {
+            showToast('Supabase Client কনফিগার করা নেই!', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'লগইন করুন';
+            return;
+          }
+
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: pass
+          });
+
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'লগইন করুন';
+
+          if (error) {
+            showToast('লগইন ব্যর্থ: ' + error.message, 'error');
+          } else {
             showToast('অ্যাডমিন লগইন সফল হয়েছে!', 'success');
             checkAuth();
-          } else {
-            showToast('ভুল ক্রেডেনশিয়াল! অনুগ্রহ করে সঠিক তথ্য দিন।', 'error');
           }
         });
       }
 
-      // Handle Publish Notice Form
+      // Handle Publish Notice Form -> Directly to Supabase
       const publishForm = document.getElementById('publish-notice-form');
       if (publishForm) {
-        publishForm.addEventListener('submit', (e) => {
+        publishForm.addEventListener('submit', async (e) => {
           e.preventDefault();
+          const submitBtn = publishForm.querySelector('button[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.innerText = 'পাবলিশ হচ্ছে...';
+
           const title = document.getElementById('notice-title-input').value.trim();
           const category = document.getElementById('notice-cat-input').value;
           const author = document.getElementById('notice-author-input').value.trim();
           const content = document.getElementById('notice-body-input').value.trim();
-          const pinned = document.getElementById('notice-pinned-input').checked;
+          const is_pinned = document.getElementById('notice-pinned-input').checked;
 
           const badgeClasses = {
             'Recruitment': 'badge-urgent',
@@ -631,29 +736,30 @@
           };
 
           const newNotice = {
-            id: 'notice-' + Date.now(),
             title: title,
             category: category,
-            badgeClass: badgeClasses[category] || 'badge-general',
-            date: new Date().toISOString().split('T')[0],
+            badge_class: badgeClasses[category] || 'badge-general',
             author: author || 'Executive Committee',
-            pinned: pinned,
+            is_pinned: is_pinned,
             content: content
           };
 
-          const notices = getNotices();
-          if (pinned) {
-            notices.unshift(newNotice);
-          } else {
-            notices.push(newNotice);
-          }
-          saveNotices(notices);
+          const supabase = getSupabase();
+          const { data, error } = await supabase
+            .from('notices')
+            .insert([newNotice]);
 
-          publishForm.reset();
-          closePublishModal();
-          renderNoticesTable();
-          updateStats();
-          showToast('নোটিশ সফলভাবে প্রকাশিত হয়েছে! হোমপেজে প্রদর্শিত হচ্ছে।', 'success');
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'নোটিশ পাবলিশ করুন';
+
+          if (error) {
+            showToast('নোটিশ প্রকাশ ব্যর্থ: ' + error.message, 'error');
+          } else {
+            publishForm.reset();
+            closePublishModal();
+            showToast('নোটিশ ডাটাবেসে প্রকাশিত হয়েছে!', 'success');
+            loadDashboardData();
+          }
         });
       }
     });
