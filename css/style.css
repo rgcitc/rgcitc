@@ -935,13 +935,18 @@ button {
 }
 
 .about-logo-img {
-  width: 54px;
-  height: 54px;
+  width: 110px;
+  height: 110px;
   object-fit: contain;
   border-radius: 50%;
   background: #ffffff;
-  padding: 3px;
-  border: 2px solid rgba(6, 182, 212, 0.35);
+  padding: 4px;
+  border: 3px solid rgba(6, 182, 212, 0.45);
+  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
+  transition: transform var(--transition);
+}
+.about-logo-img:hover {
+  transform: scale(1.05);
 }
 
 .info-item {
