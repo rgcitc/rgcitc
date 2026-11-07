@@ -1,10 +1,10 @@
 -- ==============================================================================
 -- RGCITC - Rangpur Govt. College Information & Technology Club
 -- Fully Idempotent & Re-runnable Supabase Schema & Security
--- Safe to execute unlimited times without duplicate errors or conflicts
+-- Drops tables cleanly using CASCADE or handles policies seamlessly
 -- ==============================================================================
 
--- 1. Create table for Club Notices & Circulars (if not exists)
+-- 1. Create tables if not exists
 CREATE TABLE IF NOT EXISTS public.notices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS public.notices (
     created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
--- 2. Create table for Student Registrations (if not exists)
 CREATE TABLE IF NOT EXISTS public.registrations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     full_name TEXT NOT NULL,
@@ -32,31 +31,41 @@ CREATE TABLE IF NOT EXISTS public.registrations (
 );
 
 -- ==============================================================================
--- TABLE PRIVILEGES (Re-runnable: GRANT is safe to run multiple times)
+-- TABLE PRIVILEGES
 -- ==============================================================================
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 
--- Notices privileges
 GRANT SELECT ON public.notices TO anon;
 GRANT ALL ON public.notices TO authenticated;
 
--- Registrations privileges
 GRANT INSERT ON public.registrations TO anon;
 GRANT ALL ON public.registrations TO authenticated;
 
--- ==============================================================================
--- ROW LEVEL SECURITY (RLS) POLICIES
--- Clean drop first, then recreate to ensure 100% re-run safety
--- ==============================================================================
+-- Enable Row Level Security
 ALTER TABLE public.notices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
 
--- Notices Policies: Drop & Recreate
-DROP POLICY IF EXISTS "Public notices are viewable by everyone" ON public.notices;
-DROP POLICY IF EXISTS "Only authenticated admins can insert notices" ON public.notices;
-DROP POLICY IF EXISTS "Only authenticated admins can update notices" ON public.notices;
-DROP POLICY IF EXISTS "Only authenticated admins can delete notices" ON public.notices;
+-- ==============================================================================
+-- DROP ALL EXISTING POLICIES FIRST (Guaranteed to avoid duplicate policy error)
+-- ==============================================================================
+DO $$
+DECLARE
+    pol RECORD;
+BEGIN
+    FOR pol IN 
+        SELECT policyname, tablename 
+        FROM pg_policies 
+        WHERE schemaname = 'public' AND tablename IN ('notices', 'registrations')
+    LOOP
+        EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, pol.tablename);
+    END LOOP;
+END $$;
 
+-- ==============================================================================
+-- RECREATE POLICIES CLEANLY
+-- ==============================================================================
+
+-- Notices Policies
 CREATE POLICY "Public notices are viewable by everyone" 
 ON public.notices 
 FOR SELECT 
@@ -80,12 +89,7 @@ FOR DELETE
 TO authenticated 
 USING (true);
 
--- Registrations Policies: Drop & Recreate
-DROP POLICY IF EXISTS "Public students can submit membership application" ON public.registrations;
-DROP POLICY IF EXISTS "Only authenticated admins can view registrations" ON public.registrations;
-DROP POLICY IF EXISTS "Only authenticated admins can update registrations" ON public.registrations;
-DROP POLICY IF EXISTS "Only authenticated admins can delete registrations" ON public.registrations;
-
+-- Registrations Policies
 CREATE POLICY "Public students can submit membership application" 
 ON public.registrations 
 FOR INSERT 
@@ -117,7 +121,7 @@ TO authenticated
 USING (true);
 
 -- ==============================================================================
--- Idempotent Seed Data (Only inserts if matching notice does not already exist)
+-- Seed Data (Safe: Inserts only if title doesn't exist)
 -- ==============================================================================
 INSERT INTO public.notices (title, category, badge_class, author, content, is_pinned)
 SELECT 
