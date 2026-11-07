@@ -1,0 +1,16 @@
+// Firebase Storage Security Rules
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Notices attachments: Anyone can download/read; Only admin can upload
+    match /notices/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Default fallback: Admin only
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — RGCITC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/features.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1.25rem;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .admin-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .admin-tab {
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .admin-tab.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+    }
+    .metric-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      margin-top: 0.35rem;
+    }
+    .metric-label {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Responsive applicant card list for smaller mobile devices */
+    .mobile-reg-cards {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .mobile-reg-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+    }
+    .mobile-reg-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .mobile-reg-body {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Auth gate view */
+    .auth-gate-box {
+      max-width: 440px;
+      margin: 4rem auto;
+      padding: 2.25rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    @media (max-width: 768px) {
+      .data-table-wrapper {
+        display: none; /* Hide heavy table on phone */
+      }
+      .mobile-reg-cards {
+        display: flex; /* Show touch-friendly cards on phone */
+      }
+      .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .admin-header button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <img src="assets/rgc-logo.png" alt="RGC Logo" class="brand-logo-img">
+        <div>
+          <div class="brand-title">RGCITC Admin</div>
+          <div class="brand-sub">Management Portal</div>
+        </div>
+      </a>
+      <div class="nav-actions">
+        <a href="index.html" class="btn-secondary" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">&larr; Web View</a>
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Gate Container -->
+  <div id="admin-auth-gate" class="container" style="display: none;">
+    <div class="auth-gate-box">
+      <img src="assets/rgc-logo.png" alt="RGC Logo" style="width: 64px; height: 64px; margin-bottom: 1rem;">
+      <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Executive Login</h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        রংপুর সরকারি কলেজ আইসিটি ক্লাব অ্যাডমিন প্যানেলে লগইন করুন।
+      </p>
+      <form id="admin-login-form">
+        <div class="form-group" style="text-align: left;">
+          <label class="form-label" for="login-email">অ্যাডমিন আইডি / ইমেইল</label>
+          <input type="text" id="login-email" class="form-input" required placeholder="admin@rgcitc.org">
+        </div>
+        <div class="form-group" style="text-align: left;">
+          <label class="form-label" for="login-password">পাসওয়ার্ড</label>
+          <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+          ডেমো অ্যাক্সেস: ইমেইল <code>admin@rgcitc.org</code> / পাসওয়ার্ড <code>admin123</code>
+        </p>
+        <button type="submit" class="btn-accent" style="width: 100%;">লগইন করুন</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Authenticated Dashboard Area -->
+  <main class="admin-container" id="admin-dashboard-area">
+    <div class="admin-header">
+      <div>
+        <h1 style="font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem;">Club Administration Dashboard</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Manage announcements, publish circulars, and review membership requests.</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn-accent" onclick="openPublishNoticeModal()">
+          <span>+</span> Publish Notice
+        </button>
+        <button class="btn-secondary" onclick="handleAdminLogout()" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">
+          লগআউট
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">Active Notices</div>
+        <div class="metric-value" id="stat-notices-count">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total Applicants</div>
+        <div class="metric-value" id="stat-reg-total">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Pending Review</div>
+        <div class="metric-value" style="color: var(--accent-amber);" id="stat-reg-pending">0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Approved Members</div>
+        <div class="metric-value" style="color: var(--accent-emerald);" id="stat-reg-approved">0</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('registrations', this)">Student Registrations</button>
+      <button class="admin-tab" onclick="switchAdminTab('notices', this)">Notices &amp; Announcements</button>
+    </div>
+
+    <!-- TAB 1: Registrations -->
+    <section id="tab-registrations" class="tab-content active">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+        <h2 style="font-size: 1.2rem;">Registered Students</h2>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-secondary" onclick="exportRegistrationsCSV()" style="font-size: 0.85rem; padding: 0.5rem 0.85rem;">📥 Export CSV</button>
+        </div>
+      </div>
+
+      <!-- Desktop Table View -->
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Roll &amp; Session</th>
+              <th>Department</th>
+              <th>Wing Preference</th>
+              <th>Contact</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="registrations-tbody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Touch Card View (< 768px) -->
+      <div id="registrations-mobile-cards" class="mobile-reg-cards">
+        <!-- Dynamic mobile cards -->
+      </div>
+    </section>
+
+    <!-- TAB 2: Notices -->
+    <section id="tab-notices" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+        <h2 style="font-size: 1.2rem;">Published Notices</h2>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Author</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="notices-tbody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Notices Cards -->
+      <div id="notices-mobile-cards" class="mobile-reg-cards">
+        <!-- Dynamic mobile cards -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Publish Notice Modal -->
+  <div id="publish-notice-modal" class="modal-overlay">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closePublishModal()" aria-label="Close">&times;</button>
+      <div style="margin-bottom: 1.25rem;">
+        <span class="badge-tag badge-urgent">Admin Publisher</span>
+        <h2 style="font-size: 1.4rem; margin-top: 0.5rem;">নতুন নোটিশ প্রকাশ করুন</h2>
+      </div>
+
+      <form id="publish-notice-form">
+        <div class="form-group">
+          <label class="form-label" for="notice-title-input">নোটিশের শিরোনাম *</label>
+          <input type="text" id="notice-title-input" class="form-input" required placeholder="উদাহরণ: আসন্ন প্রজেক্ট শোকেস ২০২৬">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="notice-cat-input">ক্যাটাগরি *</label>
+            <select id="notice-cat-input" class="form-select">
+              <option value="Recruitment">Recruitment</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Contest">Contest</option>
+              <option value="Notice" selected>General Notice</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="notice-author-input">প্রকাশক / কমিটি</label>
+            <input type="text" id="notice-author-input" class="form-input" value="Executive Committee">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="notice-body-input">বিস্তারিত বিবরণ *</label>
+          <textarea id="notice-body-input" rows="5" class="form-textarea" required placeholder="নোটিশের সম্পূর্ণ বিবরণ এখানে লিখুন..."></textarea>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="notice-pinned-input" style="accent-color: var(--accent-cyan); width: 18px; height: 18px;">
+          <label for="notice-pinned-input" style="font-size: 0.9rem; cursor: pointer;">হোমপেজে পিন করে রাখুন (Pinned on top)</label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
+          <button type="button" class="btn-secondary" onclick="closePublishModal()">বাতিল</button>
+          <button type="submit" class="btn-accent">নোটিশ পাবলিশ করুন</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/features.js"></script>
+  <script>
+    // Authentication Check
+    function checkAuth() {
+      const isLoggedIn = localStorage.getItem(STORAGE_KEYS.IS_ADMIN) === 'true';
+      const authGate = document.getElementById('admin-auth-gate');
+      const dashboard = document.getElementById('admin-dashboard-area');
+
+      if (!isLoggedIn) {
+        authGate.style.display = 'block';
+        dashboard.style.display = 'none';
+      } else {
+        authGate.style.display = 'none';
+        dashboard.style.display = 'block';
+        updateStats();
+        renderRegistrationsTable();
+        renderNoticesTable();
+      }
+    }
+
+    function handleAdminLogout() {
+      localStorage.removeItem(STORAGE_KEYS.IS_ADMIN);
+      showToast('লগআউট সম্পন্ন হয়েছে।', 'info');
+      checkAuth();
+    }
+
+    function switchAdminTab(tabName, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function openPublishNoticeModal() {
+      document.getElementById('publish-notice-modal').classList.add('active');
+    }
+
+    function closePublishModal() {
+      document.getElementById('publish-notice-modal').classList.remove('active');
+    }
+
+    function updateStats() {
+      const notices = getNotices();
+      const regs = getRegistrations();
+      document.getElementById('stat-notices-count').innerText = notices.length;
+      document.getElementById('stat-reg-total').innerText = regs.length;
+      document.getElementById('stat-reg-pending').innerText = regs.filter(r => r.status === 'pending').length;
+      document.getElementById('stat-reg-approved').innerText = regs.filter(r => r.status === 'approved').length;
+    }
+
+    function renderRegistrationsTable() {
+      const tbody = document.getElementById('registrations-tbody');
+      const mobileCards = document.getElementById('registrations-mobile-cards');
+      const regs = getRegistrations();
+
+      if (regs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো আবেদন জমা পড়েনি।</td></tr>`;
+        mobileCards.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো আবেদন জমা পড়েনি।</div>`;
+        return;
+      }
+
+      // Desktop table render
+      tbody.innerHTML = regs.map(r => `
+        <tr>
+          <td><strong>${escapeHtml(r.fullName)}</strong></td>
+          <td>${escapeHtml(r.roll)}<br><small style="color:var(--text-muted);">${escapeHtml(r.session || 'N/A')}</small></td>
+          <td>${escapeHtml(r.dept || 'N/A')}</td>
+          <td>${(r.wings || []).map(w => `<span style="display:inline-block; font-size:0.75rem; background:var(--bg-tertiary); padding:2px 6px; border-radius:4px; margin:2px;">${escapeHtml(w)}</span>`).join('')}</td>
+          <td>
+            <a href="mailto:${escapeHtml(r.email)}" style="color:var(--accent-cyan); font-size:0.85rem;">${escapeHtml(r.email)}</a><br>
+            <small style="color:var(--text-muted);">${escapeHtml(r.phone)}</small>
+          </td>
+          <td>
+            <span class="status-badge status-${r.status}">${r.status.toUpperCase()}</span>
+          </td>
+          <td>
+            <div class="table-actions">
+              ${r.status === 'pending' ? `
+                <button class="btn-sm btn-sm-approve" onclick="updateRegStatus('${r.id}', 'approved')" title="Approve">✓ Approve</button>
+                <button class="btn-sm btn-sm-delete" onclick="updateRegStatus('${r.id}', 'rejected')" title="Reject">✕</button>
+              ` : `
+                <button class="btn-sm btn-sm-delete" onclick="deleteReg('${r.id}')" title="Delete">Delete</button>
+              `}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      // Mobile cards render
+      mobileCards.innerHTML = regs.map(r => `
+        <div class="mobile-reg-card">
+          <div class="mobile-reg-header">
+            <div>
+              <strong style="font-size: 1.05rem; color: var(--text-primary);">${escapeHtml(r.fullName)}</strong>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                Roll: ${escapeHtml(r.roll)} • Session: ${escapeHtml(r.session || 'N/A')}
+              </div>
+            </div>
+            <span class="status-badge status-${r.status}">${r.status.toUpperCase()}</span>
+          </div>
+          <div class="mobile-reg-body">
+            <div><strong>Dept:</strong> ${escapeHtml(r.dept || 'N/A')}</div>
+            <div><strong>Contact:</strong> ${escapeHtml(r.phone)} | <a href="mailto:${escapeHtml(r.email)}" style="color:var(--accent-cyan);">${escapeHtml(r.email)}</a></div>
+            <div style="margin-top: 0.25rem;">
+              <strong>Wings:</strong> ${(r.wings || []).map(w => `<span style="display:inline-block; font-size:0.75rem; background:var(--bg-tertiary); padding:2px 6px; border-radius:4px; margin:2px;">${escapeHtml(w)}</span>`).join('')}
+            </div>
+            ${r.statement ? `<div style="font-style: italic; margin-top: 0.25rem; background: var(--bg-primary); padding: 0.5rem; border-radius: var(--radius-sm);">"${escapeHtml(r.statement)}"</div>` : ''}
+          </div>
+          <div class="table-actions" style="margin-top: 0.5rem;">
+            ${r.status === 'pending' ? `
+              <button class="btn-sm btn-sm-approve" style="flex: 1;" onclick="updateRegStatus('${r.id}', 'approved')">✓ Approve</button>
+              <button class="btn-sm btn-sm-delete" style="flex: 1;" onclick="updateRegStatus('${r.id}', 'rejected')">✕ Reject</button>
+            ` : `
+              <button class="btn-sm btn-sm-delete" style="width: 100%;" onclick="deleteReg('${r.id}')">Delete Entry</button>
+            `}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderNoticesTable() {
+      const tbody = document.getElementById('notices-tbody');
+      const mobileCards = document.getElementById('notices-mobile-cards');
+      const notices = getNotices();
+
+      if (notices.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো নোটিশ নেই।</td></tr>`;
+        mobileCards.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">কোনো নোটিশ নেই।</div>`;
+        return;
+      }
+
+      // Desktop table render
+      tbody.innerHTML = notices.map(n => `
+        <tr>
+          <td>
+            <strong>${escapeHtml(n.title)}</strong>
+            ${n.pinned ? '<span style="color:var(--accent-cyan); font-size:0.75rem; margin-left:6px;">📌 Pinned</span>' : ''}
+          </td>
+          <td><span class="badge-tag ${n.badgeClass || 'badge-general'}">${escapeHtml(n.category)}</span></td>
+          <td style="font-family:var(--font-mono); font-size:0.85rem;">${escapeHtml(n.date)}</td>
+          <td>${escapeHtml(n.author || 'N/A')}</td>
+          <td><span class="status-badge status-approved">Live</span></td>
+          <td>
+            <div class="table-actions">
+              <button class="btn-sm btn-sm-delete" onclick="deleteNotice('${n.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      // Mobile cards render
+      mobileCards.innerHTML = notices.map(n => `
+        <div class="mobile-reg-card">
+          <div class="mobile-reg-header">
+            <div>
+              <span class="badge-tag ${n.badgeClass || 'badge-general'}">${escapeHtml(n.category)}</span>
+              ${n.pinned ? '<span style="color:var(--accent-cyan); font-size:0.75rem; margin-left:6px;">📌 Pinned</span>' : ''}
+              <h3 style="font-size: 1.05rem; margin-top: 0.4rem; color: var(--text-primary);">${escapeHtml(n.title)}</h3>
+            </div>
+          </div>
+          <div class="mobile-reg-body">
+            <div><strong>Date:</strong> ${escapeHtml(n.date)} • <strong>Author:</strong> ${escapeHtml(n.author || 'RGCITC')}</div>
+            <p style="margin-top: 0.25rem;">${escapeHtml(n.content.length > 120 ? n.content.substring(0, 120) + '...' : n.content)}</p>
+          </div>
+          <div class="table-actions">
+            <button class="btn-sm btn-sm-delete" style="width: 100%;" onclick="deleteNotice('${n.id}')">Delete Notice</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    window.updateRegStatus = function(id, status) {
+      const regs = getRegistrations();
+      const target = regs.find(r => r.id === id);
+      if (target) {
+        target.status = status;
+        saveRegistrations(regs);
+        renderRegistrationsTable();
+        updateStats();
+        showToast(`স্টুডেন্ট আবেদন ${status === 'approved' ? 'অনুমোদন' : 'বাতিল'} করা হয়েছে।`, 'success');
+      }
+    };
+
+    window.deleteReg = function(id) {
+      if (!confirm('আপনি কি এই আবেদনটি মুছে ফেলতে চান?')) return;
+      let regs = getRegistrations();
+      regs = regs.filter(r => r.id !== id);
+      saveRegistrations(regs);
+      renderRegistrationsTable();
+      updateStats();
+      showToast('আবেদন মুছে ফেলা হয়েছে।', 'info');
+    };
+
+    window.deleteNotice = function(id) {
+      if (!confirm('আপনি কি এই নোটিশটি মুছে ফেলতে চান?')) return;
+      let notices = getNotices();
+      notices = notices.filter(n => n.id !== id);
+      saveNotices(notices);
+      renderNoticesTable();
+      updateStats();
+      showToast('নোটিশ মুছে ফেলা হয়েছে।', 'info');
+    };
+
+    window.exportRegistrationsCSV = function() {
+      const regs = getRegistrations();
+      if (regs.length === 0) {
+        showToast('রপ্তানি করার মতো কোনো আবেদন নেই!', 'error');
+        return;
+      }
+      let csv = '\uFEFF' + 'Full Name,Roll,Session,Department,Email,Phone,Wings,Status,Date\n';
+      regs.forEach(r => {
+        csv += `"${(r.fullName||'').replace(/"/g, '""')}","${r.roll}","${r.session||''}","${r.dept||''}","${r.email}","${r.phone}","${(r.wings || []).join('; ')}","${r.status}","${r.createdAt}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `rgcitc_members_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default admin login state check
+      checkAuth();
+
+      // Handle Admin Login
+      const loginForm = document.getElementById('admin-login-form');
+      if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const email = document.getElementById('login-email').value.trim();
+          const pass = document.getElementById('login-password').value;
+
+          // Default credentials (or when connected to Firebase auth)
+          if ((email === 'admin@rgcitc.org' || email === 'admin') && pass === 'admin123') {
+            localStorage.setItem(STORAGE_KEYS.IS_ADMIN, 'true');
+            showToast('অ্যাডমিন লগইন সফল হয়েছে!', 'success');
+            checkAuth();
+          } else {
+            showToast('ভুল ক্রেডেনশিয়াল! অনুগ্রহ করে সঠিক তথ্য দিন।', 'error');
+          }
+        });
+      }
+
+      // Handle Publish Notice Form
+      const publishForm = document.getElementById('publish-notice-form');
+      if (publishForm) {
+        publishForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const title = document.getElementById('notice-title-input').value.trim();
+          const category = document.getElementById('notice-cat-input').value;
+          const author = document.getElementById('notice-author-input').value.trim();
+          const content = document.getElementById('notice-body-input').value.trim();
+          const pinned = document.getElementById('notice-pinned-input').checked;
+
+          const badgeClasses = {
+            'Recruitment': 'badge-urgent',
+            'Workshop': 'badge-workshop',
+            'Contest': 'badge-event',
+            'Notice': 'badge-general'
+          };
+
+          const newNotice = {
+            id: 'notice-' + Date.now(),
+            title: title,
+            category: category,
+            badgeClass: badgeClasses[category] || 'badge-general',
+            date: new Date().toISOString().split('T')[0],
+            author: author || 'Executive Committee',
+            pinned: pinned,
+            content: content
+          };
+
+          const notices = getNotices();
+          if (pinned) {
+            notices.unshift(newNotice);
+          } else {
+            notices.push(newNotice);
+          }
+          saveNotices(notices);
+
+          publishForm.reset();
+          closePublishModal();
+          renderNoticesTable();
+          updateStats();
+          showToast('নোটিশ সফলভাবে প্রকাশিত হয়েছে! হোমপেজে প্রদর্শিত হচ্ছে।', 'success');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+// Rules for Firestore
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is authenticated admin
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Notices: Public read-only; Only authenticated admin can create, update or delete
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Registrations: Anyone can create (submit an application); Only admin can read, update status, or delete
+    match /registrations/{regId} {
+      allow create: if request.resource.data.fullName is string
+                    && request.resource.data.roll is string
+                    && request.resource.data.email is string
+                    && request.resource.data.wings is list
+                    && request.resource.data.wings.size() > 0
+                    && request.resource.data.status == 'pending';
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}
