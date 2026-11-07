@@ -4,19 +4,19 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Theme Toggle (Dark / Light)
-  const themeToggleBtn = document.getElementById('theme-toggle');
+  // Theme Toggle (Dark / Light) - Attach to all theme-toggle elements
+  const themeToggleBtns = document.querySelectorAll('.theme-toggle-btn');
   const storedTheme = localStorage.getItem('rgcitc_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', storedTheme);
 
-  if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
+  themeToggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme') || 'dark';
       const next = current === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('rgcitc_theme', next);
     });
-  }
+  });
 
   // Mobile Navigation Drawer
   const mobileToggle = document.getElementById('mobile-menu-toggle');
