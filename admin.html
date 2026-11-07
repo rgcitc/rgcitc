@@ -344,6 +344,37 @@
           <label for="notice-pinned-input" style="font-size: 0.9rem; cursor: pointer;">হোমপেজে পিন করে রাখুন (Pinned on top)</label>
         </div>
 
+        <div style="border-top: 1px dashed var(--border-subtle); margin: 1.25rem 0; padding-top: 1rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.92rem; font-weight: 600; color: var(--accent-cyan);">
+              <input type="checkbox" id="broadcast-email-checkbox" onchange="toggleGmailFields(this.checked)" style="accent-color: var(--accent-cyan); width: 18px; height: 18px;">
+              📧 Send Email Notification to Registered Members
+            </label>
+          </div>
+
+          <div id="gmail-fields-box" style="display: none; margin-top: 1rem; background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+              ℹ️ আপনার জিমেইল ক্রেডেনশিয়াল কোথাও সেভ বা স্টোর করা হবে না। সরাসরি এই সেশনে নোটিশটি মেইল করতে ব্যবহৃত হবে।
+            </p>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" style="font-size: 0.8rem;" for="gmail-sender-input">Your Gmail Address</label>
+                <input type="email" id="gmail-sender-input" class="form-input" placeholder="president@gmail.com">
+              </div>
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label class="form-label" style="font-size: 0.8rem;" for="gmail-app-pass-input">Gmail App Password (16-char)</label>
+                <input type="password" id="gmail-app-pass-input" class="form-input" placeholder="•••• •••• •••• ••••">
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem;">
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Quick option:</span>
+              <button type="button" class="btn-sm" onclick="openGmailClientBcc()" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;">
+                Open in Gmail Web (Draft with all student emails BCC'd)
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
           <button type="button" class="btn-secondary" onclick="closePublishModal()">বাতিল</button>
           <button type="submit" class="btn-accent">নোটিশ পাবলিশ করুন</button>
@@ -384,6 +415,28 @@
         toast.style.transform = 'translateY(10px)';
         setTimeout(() => toast.remove(), 300);
       }, 3500);
+    }
+
+    function toggleGmailFields(show) {
+      document.getElementById('gmail-fields-box').style.display = show ? 'block' : 'none';
+    }
+
+    function openGmailClientBcc() {
+      const title = document.getElementById('notice-title-input').value.trim();
+      const content = document.getElementById('notice-body-input').value.trim();
+      const emails = globalRegistrations.map(r => r.email).filter(Boolean);
+
+      if (emails.length === 0) {
+        showToast('কোনো নিবন্ধিত শিক্ষার্থীর ইমেইল পাওয়া যায়নি।', 'error');
+        return;
+      }
+
+      const subject = encodeURIComponent(`[RGCITC Notice] ${title}`);
+      const body = encodeURIComponent(`Dear Member,\n\n${content}\n\n---\nRangpur Govt. College Information & Technology Club\nWebsite: https://rgcitc.web.app`);
+      const bcc = encodeURIComponent(emails.join(','));
+
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${subject}&body=${body}&bcc=${bcc}`;
+      window.open(gmailUrl, '_blank');
     }
 
     // Auth & Session Check with Supabase
