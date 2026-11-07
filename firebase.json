@@ -1,10 +1,13 @@
 {
   "hosting": {
     "public": ".",
+    "cleanUrls": true,
+    "trailingSlash": false,
     "ignore": [
       "firebase.json",
       "firestore.rules",
       "storage.rules",
+      "supabase_schema.sql",
       "**/.*",
       "**/node_modules/**"
     ],
@@ -12,6 +15,10 @@
       {
         "source": "/admin",
         "destination": "/admin.html"
+      },
+      {
+        "source": "/join",
+        "destination": "/index.html"
       },
       {
         "source": "**",
