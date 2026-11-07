@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const newRegistration = {
         full_name: formData.get('fullName').trim(),
         roll: formData.get('roll').trim(),
-        session: formData.get('session').trim(),
+        session: 'HSC ' + (formData.get('batch') || '2028'),
         department: formData.get('dept').trim(),
         phone: phone,
         email: email,
