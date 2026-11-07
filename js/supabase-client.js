@@ -1,15 +1,13 @@
 /**
  * Supabase Client Configuration for RGCITC
- * Replace SUPABASE_URL and SUPABASE_ANON_KEY with your project credentials
- * from https://supabase.com/dashboard/project/<your-project>/settings/api
  */
 
 const SUPABASE_CONFIG = {
-  url: window.__ENV_SUPABASE_URL || "https://YOUR_PROJECT_ID.supabase.co",
-  anonKey: window.__ENV_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_PUBLIC_KEY"
+  url: "https://gujxkdrhmchunwfuqbfg.supabase.co",
+  anonKey: "sb_publishable_Q5M0bA8oswuAUOdlrmrn7Q_tFsdemrA"
 };
 
-// Initialize Supabase Client (from CDN)
+// Initialize Supabase Client
 let supabaseClient = null;
 
 function getSupabase() {
