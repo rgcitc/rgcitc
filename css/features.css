@@ -423,3 +423,127 @@
     padding: 1.25rem;
   }
 }
+
+/* ==========================================================================
+   Full Mobile & Ultra-Small Screen Polish (< 480px and High-DPI Mobile)
+   ========================================================================== */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 3rem 0 2.5rem;
+  }
+  .hero-title {
+    font-size: 1.8rem !important;
+    line-height: 1.25 !important;
+  }
+  .hero-subtitle {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+  }
+  .hero-badge {
+    padding: 0.25rem 0.65rem !important;
+  }
+  .hero-badge-tag {
+    font-size: 0.7rem !important;
+  }
+  .hero-badge-text {
+    font-size: 0.75rem !important;
+  }
+  
+  .section {
+    padding: 3rem 0;
+  }
+  .section-title {
+    font-size: 1.65rem !important;
+  }
+  
+  /* Brand in navbar */
+  .brand-logo-img {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  .brand-title {
+    font-size: 1.05rem !important;
+  }
+  .brand-sub {
+    font-size: 0.68rem !important;
+  }
+  
+  /* Touch target safety */
+  .nav-actions {
+    gap: 0.4rem !important;
+  }
+  .nav-actions .btn-accent {
+    padding: 0.45rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+  .theme-toggle-btn, .mobile-nav-toggle {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  /* Modals on small phones */
+  .modal-overlay {
+    padding: 0.5rem !important;
+  }
+  .modal-card {
+    padding: 1.15rem 1rem !important;
+    border-radius: var(--radius-md) !important;
+    max-height: 96vh !important;
+  }
+  .modal-card h2 {
+    font-size: 1.25rem !important;
+  }
+  .modal-close-btn {
+    top: 0.85rem !important;
+    right: 0.85rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1.1rem !important;
+  }
+  
+  /* Notice Cards */
+  .notice-card {
+    padding: 1.15rem !important;
+  }
+  .notice-title {
+    font-size: 1.05rem !important;
+  }
+  
+  /* Wings Cards */
+  .wing-card {
+    padding: 1.25rem !important;
+  }
+  
+  /* Form Inputs on Mobile (prevent iOS auto-zoom) */
+  .form-input, .form-select, .form-textarea {
+    font-size: 16px !important;
+    padding: 0.7rem 0.85rem !important;
+  }
+  .checkbox-item {
+    padding: 0.65rem 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+  .checkbox-item input {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0;
+  }
+  
+  /* Footer */
+  .site-footer {
+    padding: 3rem 0 1.5rem !important;
+  }
+  .footer-bottom {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 0.5rem !important;
+  }
+}
